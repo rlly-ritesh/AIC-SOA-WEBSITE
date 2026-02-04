@@ -690,6 +690,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// --- HIGHLIGHT ACTIVE NAV ITEM ---
+document.addEventListener('DOMContentLoaded', () => {
+    const navItems = document.querySelectorAll('.nav-item');
+    const currentPath = window.location.pathname.replace(/\\/g, '/').toLowerCase();
+    
+    navItems.forEach(navItem => {
+        let isActive = false;
+        
+        // Check top-level link
+        const topLink = navItem.querySelector(':scope > .nav-link');
+        if (topLink) {
+            const href = topLink.getAttribute('href');
+            if (href && href !== '#') {
+                try {
+                    const linkPath = new URL(href, window.location.href).pathname.replace(/\\/g, '/').toLowerCase();
+                    const normalizedLink = linkPath.endsWith('/') ? linkPath + 'index.html' : linkPath;
+                    const normalizedCurrent = currentPath.endsWith('/') ? currentPath + 'index.html' : currentPath;
+                    if (normalizedLink === normalizedCurrent) {
+                        isActive = true;
+                    }
+                } catch (e) {}
+            }
+        }
+        
+        // Check dropdown items if top link doesn't match
+        if (!isActive) {
+            const dropdownLinks = navItem.querySelectorAll('.dropdown-menu a');
+            for (const link of dropdownLinks) {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                    try {
+                        const linkPath = new URL(href, window.location.href).pathname.replace(/\\/g, '/').toLowerCase();
+                        const normalizedLink = linkPath.endsWith('/') ? linkPath + 'index.html' : linkPath;
+                        const normalizedCurrent = currentPath.endsWith('/') ? currentPath + 'index.html' : currentPath;
+                        if (normalizedLink === normalizedCurrent) {
+                            isActive = true;
+                            break;
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+        
+        // Apply or remove active class
+        if (isActive) {
+            navItem.classList.add('active');
+        } else {
+            navItem.classList.remove('active');
+        }
+    });
+});
+
 // --- SITE WIDE BREADCRUMB (inserts under alert bar) ---
 document.addEventListener('DOMContentLoaded', () => {
     try {

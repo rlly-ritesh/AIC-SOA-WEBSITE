@@ -150,8 +150,12 @@ body {
   padding: 0px 16px;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-links a:hover {
+  color: #d32f2f;
+}
+
+.nav-links a.active,
+.nav-item.active > .nav-link {
   color: #d32f2f;
 }
 
