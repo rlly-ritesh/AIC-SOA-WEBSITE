@@ -1460,6 +1460,17 @@ body {
   }
 }
 
+/* Partner logos: grayscale by default, color on hover */
+.logo-section.partners .marquee-content img {
+  filter: grayscale(100%);
+  opacity: 0.7;
+}
+
+.logo-section.partners .marquee-content img:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
 /* Media Queries */
 @media (max-width: 1100px) {
   .nav-links,
