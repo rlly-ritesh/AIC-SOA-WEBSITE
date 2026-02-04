@@ -689,3 +689,117 @@ document.addEventListener('DOMContentLoaded', () => {
         if (track) track.style.transform = `translateX(0px)`;
     });
 });
+
+// --- SITE WIDE BREADCRUMB (inserts under alert bar) ---
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const headerTop = document.querySelector('.header-top');
+        if (!headerTop) return;
+
+        // where to insert: under alert-bar if present, else after navbar
+        const alertBar = headerTop.querySelector('.alert-bar');
+        const navbar = headerTop.querySelector('.navbar');
+
+        const insertAfter = alertBar || navbar;
+        if (!insertAfter) return;
+
+        // Build crumbs by matching the site's navigation structure first
+        const currentPath = window.location.pathname.replace(/\\/g, '/');
+        const currentFull = currentPath.endsWith('/') ? currentPath + 'index.html' : currentPath;
+
+        const navRoot = document.querySelector('.nav-links');
+        const crumbs = [];
+
+        let matched = false;
+        if (navRoot) {
+            // consider both top-level links and dropdown items
+            const allLinks = Array.from(navRoot.querySelectorAll('a'));
+            for (const link of allLinks) {
+                const href = link.getAttribute('href');
+                if (!href) continue;
+                // Ignore anchors and non-page links that would resolve to the current page (e.g., href="#")
+                const hrefTrim = href.trim().toLowerCase();
+                if (hrefTrim === '#' || hrefTrim.startsWith('#') || hrefTrim.startsWith('javascript:') || hrefTrim.startsWith('mailto:')) continue;
+                let linkPath = null;
+                try {
+                    linkPath = new URL(href, window.location.href).pathname.replace(/\\/g, '/');
+                } catch (e) { continue; }
+
+                // Normalize: treat trailing slash and index.html as equivalent
+                const normalizedLink = linkPath.endsWith('/') ? linkPath + 'index.html' : linkPath;
+                const normalizedCurrent = currentFull;
+
+                if (normalizedLink.toLowerCase() === normalizedCurrent.toLowerCase()) {
+                    // Found exact nav link that matches current page
+                    const topItem = link.closest('.nav-item');
+                    if (topItem) {
+                        const topAnchor = topItem.querySelector(':scope > .nav-link, :scope > a');
+                        if (topAnchor && topAnchor !== link) {
+                            crumbs.push({ label: topAnchor.textContent.trim() || 'Menu', href: topAnchor.getAttribute('href') || '#', current: false });
+                        }
+                    }
+                    crumbs.push({ label: link.textContent.trim() || 'Current', href: href, current: true });
+                    matched = true;
+                    break;
+                }
+            }
+        }
+
+        // If no match found in nav, fall back to path-based breadcrumb
+        if (!matched) {
+            const parts = window.location.pathname.split('/').filter(Boolean);
+            let accum = '/';
+            const nameMap = {
+                'About us-section': 'About Us',
+                'about%20us-section': 'About Us',
+                'founders_desk.html': "Founder's Desk",
+                'our_focus.html': 'Our Focus',
+                'program_benefits': 'Program Benefits',
+                'programs_benefits.html': 'Program Benefits',
+                'incubator': 'Incubator',
+                'incubator.html': 'Incubator',
+                'virtual_incubator': 'Virtual Incubator',
+                'virtual_incubator.html': 'Virtual Incubator',
+                'GAllery': 'Gallery',
+                'gallery.html': 'Gallery'
+            };
+            for (let i = 0; i < parts.length; i++) {
+                const raw = parts[i];
+                const decoded = decodeURIComponent(raw);
+                accum += raw + (i < parts.length - 1 ? '/' : '');
+                let label = nameMap[raw] || decoded.replace(/[_\-]/g, ' ').replace(/\.html$/i, '');
+                label = label.replace(/\b\w/g, ch => ch.toUpperCase());
+                const current = i === parts.length - 1;
+                crumbs.push({ label, href: accum, current });
+            }
+        }
+
+        // Create breadcrumb element
+        const nav = document.createElement('nav');
+        nav.className = 'page-breadcrumb';
+        nav.setAttribute('aria-label', 'Breadcrumb');
+        const ol = document.createElement('ol');
+        ol.className = 'breadcrumb-list';
+
+        crumbs.forEach(c => {
+            const li = document.createElement('li');
+            li.className = 'breadcrumb-item' + (c.current ? ' current' : '');
+            if (c.current) {
+                li.textContent = c.label;
+                li.setAttribute('aria-current', 'page');
+            } else {
+                const a = document.createElement('a');
+                a.href = c.href;
+                a.textContent = c.label;
+                li.appendChild(a);
+            }
+            ol.appendChild(li);
+        });
+
+        nav.appendChild(ol);
+
+        insertAfter.parentNode.insertBefore(nav, insertAfter.nextSibling);
+    } catch (e) {
+        console.error('breadcrumb init failed', e);
+    }
+});
