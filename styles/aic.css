@@ -87,7 +87,7 @@ body {
 
 .logo-container img {
   height: 50px;
-  width: 130px;
+  width: 100px;
 }
 
 .logo-text {
@@ -379,7 +379,25 @@ body {
 @media (max-width: 768px) {
   .nav-links { display: none !important; }
   .menu-toggle { display: block; }
-  .gov-logo-group { display: none; }
+  /* Show logos on mobile and position them left of the hamburger without moving the hamburger itself */
+  .gov-logo-group {
+    display: flex;
+    position: absolute;
+    right: 76px; /* place logos left of the hamburger */
+    top: 40%;
+    transform: translateY(-50%);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .gov-logo-group img {
+    height: 50px;
+    width: 100px;
+  }
+
+  /* Keep the hamburger visually on top */
+  .menu-toggle { display: block; position: relative; z-index: 1300; }
+
   .navbar { padding: 8px 16px; grid-template-columns: auto 1fr auto; }
 }
 
