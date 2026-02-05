@@ -54,6 +54,7 @@ h3 {
     font-weight: 800;
     margin-bottom: 10px;
     color: white;
+    padding-top: 140px;
     animation: slideUpFade 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
@@ -481,3 +482,6 @@ h3 {
         /* 2 items per row on mobile */
     }
 }
+    .footer-container h2{
+        color: #f9f9f9;
+    }

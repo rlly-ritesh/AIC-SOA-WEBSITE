@@ -7,7 +7,7 @@
 
 body {
     background-color: #f9f9f9;
-    padding: 40px 0 0; /* remove bottom padding so footer sits flush to page bottom */
+    padding: 140px 0 0; /* remove bottom padding so footer sits flush to page bottom */
 }
 
 .gallery-title {

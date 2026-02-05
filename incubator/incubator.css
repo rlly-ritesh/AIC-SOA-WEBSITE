@@ -22,11 +22,13 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 20px; /* keep some horizontal padding */
+  padding: 0 20px;
+  flex-direction: column; /* keep some horizontal padding */
 }
 
 .hero h1 {
   font-size: 42px;
+  padding-top: 130px;
 }
 
 .hero span {
