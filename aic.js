@@ -598,12 +598,9 @@ const initAlertPopupModal = () => {
         modal.classList.remove('active');
     };
 
-    // Open on click or hover over the alert bar
+    // Open only on click/tap of the alert bar
     alertBar.addEventListener('click', (e) => {
         e.preventDefault();
-        openModal();
-    });
-    alertBar.addEventListener('mouseenter', () => {
         openModal();
     });
     // Ensure it works on touch devices as well
